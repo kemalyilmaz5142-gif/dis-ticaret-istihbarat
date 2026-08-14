@@ -11,7 +11,10 @@ app = FastAPI(title=settings.app_name)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_origin],
+    allow_origins=[
+        settings.frontend_origin,
+        "https://dis-ticaret-istihbarat.vercel.app",
+    ],
     allow_origin_regex=r"^http://(localhost|127\.0\.0\.1):30[0-9]{2}$",
     allow_credentials=True,
     allow_methods=["*"],
