@@ -1,0 +1,143 @@
+POTANSİYEL MÜŞTERİLERİ BULMA YOLLARI
+Yazılım: Dış ticarette müşteriye yapay zekâ desteği ile otomatik ulaşmak.
+Modüller:
+Yurt dışından birisi web sitemizi ziyaret ettiği zaman kim olduğunu görmek istiyoruz.
+Bunun için;
+Web sitemizin giriş kısmına ‘Size daha iyi hizmet verebilmemiz için lütfen konum bilgisini bizimle paylaşın’ diye bir yazı koyacağız ve evet, hayır butonu yapacağız. Ziyaretçi Evet’i tıklarsa konum bilgisini eşleştirip Hangi ülkeden hangi firmanın bizi ziyaret ettiğini bize bildiri olarak gönderecek.
+Yazılımcıya not: çerezler içerisinde bu bilgi vardır. Konum bilgisinden firma ismini bulan Google servisi var. O servisten destek almak gerekebilir.
+Eğer Hayır’ı tıklarsa o zaman başka bir yolla görebilirsek görmek istiyoruz. 
+Yazılımcıya not: Ip adresi bilgisinden ilerlenebilir.
+Müşteri bulabilmek için ürettiğimiz veya sattığımız ürünlerin potansiyel alıcılarını Google botları ve yapay zekayı kullanarak bulmak istiyoruz.
+Bunun için;
+Yazılımcıya not: Burada valentin.app ten arka planda veri çeksin. Valentin.app aramayı o ülkeden yapıyormuş gibi simüle eden bir uygulama. Sadece masa üstü uygulamasıdır. Buraya bir bot yazılması gerekiyor sanki.  
+
+Yukarıya bir de bağlı sektörler bilgisi ekleyelim. Yani örneğin kaynak ekipmanları satacaksın. Bu ürün hem hırdavat hem kaynak ekipmanı pazarında bulunur.  Bunun potansiyel müşteriler açısından yan GTİP gibi bir datayı da sorgulatabilirsin. Yani otomobil satan, oto yedek parçası da satar mı? Vinç satan, demir de satar mı? Tamamlayıcı bağlı gtip çalışması yapılabilir. Bu direk ithalatçıları değil ama ikincil ithalatçıları ya da ilk kez ithalat yapabilecek potansiyel müşterileri yakalamanı sağlar.  
+
+Rakip bilgisi de önemlidir. Yani firma kendi rakiplerinin bilgisini de yazarsa o markaları da aratmak daha doğru olur.
+Yazılımcıya not: Algoritma: Parça ismini IATE + Cambridge Sözlüklerinde yukarıdaki anahtar kelimeleri doğrula. Sonra bunu search enginelerde ara.
+a. Kullanıcı hangi bilgileri biliyorsa onları dolduracak ve arayacağı ülkeye göre parçanın o dildeki ismini yazacak veya ingilizce olarak arayacak. (valentin app bunu daha nitelikli yapar)
+B. Bu form bir arayüz olarak çalışacak ve google, Yandex, safari ve diğer arama motorlarıyla entegreli çalışacak. 
+Yani kullanıcı bilgileri yazıp, aranacak ülkeyi seçtiği zaman arama motorlarını yapay zekaya otomatik tarayacak ve yazdığımız bilgilerle veya ürünün resmiyle eşleşen web sitelerini bize excel olarak listeleyecek.
+c. Dil seçeneği daha fazla olabilir çünkü konuşulan daha fazla diller var, Bulgarca, Gürcüce, Azerice gibi, ben genel hattıyla yazdım lakin arama ara yüzümüz bu dilleride olması lazım yani ‘parçanın …… ismi bölümüne tüm dilleri yazacağız ve web site uzantılarını ekleyeceğiz. (burada arama yapmak istediğin ülkeyi öncelikle seçtirmek daha doğru bir yöntem olabilir. Nitelikli arama sonuçları için. 26 ülke rusça konuşur. Hedef ülke ayrımı yapmak zorlaşır.) Valentin app api si iş görür.
+d. Tüm ülkelerde arama yaptıracağız.
+e. Arama yerine ürünün resmi diye bölüm koydum, kullanıcı ürünün resmini koyabilecek ve ürünün resmiyle eşleşen web sitelerini aynı şekilde tarayacak. (görüntü işleme kütüphanelerinden faydalanılacak)
+3- Haritalar bölümünde araştırma yapıp gene excel olarak liste yaptıracağız.
+Haritalar bölümünde konumu olan firmaları bulacağız.
+Örnek 1: Ben bir otomotiv yedek parçası üreten bir firmayım. Ben haritalarda konumda içinde ‘ otomotiv, otomotiv yedek parça, automotive, spare parts, engine’ gibi kelimeler geçen haritalarda konumu olan firmaları ülke ülke aramak istiyorum.
+Örnek 2:
+Ülke: İngiltere
+Aramak istediğim kelime: automotive
+Aramak istediğim kelime: spare part
+İngiltere bölgesinde haritada işaretli olan firmalardan içinde arattırdığım kelime olan firmaları bana excel olarak listele dediğimde bana excel listesi verecek.
+Bunu tüm ülkelerde ve tüm dillerde yapacağız.
+NOT: Çünkü bazı firmaların web sitesi olmayabiliyor ama haritalarda konumu olabiliyor ve iletişim bilgilerine buradan ulaşabiliriz.
+
+Yukarıda müşterinin girecekleri bilgiler tamam. Algoritma nasıl çalışacak (Yasin)
+Aşağıda belirttiğim sitelere tek tek girip algoritmalarındaki püf noktalarını bulalım (Yasin)
+Yazılımcı + Yasin Not: dış ticaret veritabanlarını kullanmak daha hedef odaklı sonuç verir. 
+Tradeatlas, importgenius, trademo Intel, Panjiva, Global buyers online, Europages, Tradekey, trademap, Oneworld yellow pages, Vujis, Apify (potasiyel rakip), Exim Data, TradecalculusAI, UN Comtrade. 
+
+Algoritma:
+Program web mi mobil mi, ikisi de mi? 
+Bence; Öncelikle sadece web de çalışsın, testlerini daha kolay yapabiliriz sonra mobili yapıp güncelleme olarak sunabiliriz.
+Abi bence dediğim yerler genel olarak düşündüğüm şeyler, usta gözüyle senin değerlendirmen daha iyi olur.
+Programa giriş ekranı? Üye mi yoksa freemium mu? 
+Bence; Bu program tek serverdan kontrolu sağlanmalı şekilde olmalı. Kontrol sadece bizde olup, bu programı satın alan müşterimize kullanıcı adı ve şifre verebiliriz ve son kullanıcı sade bi açılış ekranı görüp, kullanıcı adı ve şifresiyle girip işlemini yapabilir.
+Ücretlendirme politikası? Sorgu başı kontur, aylık abonelik, program satışı (ek modüller den ek gelirler) 
+1- Kullanıcıya bir kısıtlama koymamız gerekiyor gibi değilse bu programı bir kişi satın alır ve yakın çevresinin müşteri arama işlemini kendi kullanıcı adından yapabilir.
+ Bence; Her modül kendi içinde fiyatlandırması olabilir ve modüle göre aylık küçük de bir ücret belirlenebilir.
+Modul 1 : Kurulum ücreti 2.000 usd + aylık 30 usd 
+Modul 2: Kurulum ücreti 500 usd + aylık 10 usd 
+Tüm modülleri Alırsa: Kurulum ücreti 4.000 usd + aylık 100 usd gibi
+ Abi ücretlendirme işinde benim çok tecrübem yok sen ayarlarsan daha iyi olur. Ben sadece piyasadan gördüğüm kadarıyla yazdım.
+Potansiyel ek modüller? Program gelecekte başka neler yapabilir? 
+En altta detaylı olarak anlattım.
+
+Ek Modül 1 :
+(turkish exporter ve Alibaba Alibaba nın farklı ülkelerdeki alternatifleri dan talep avı?) - 
+
+1) TradeKey — Global B2B
+Dünya genelinde tedarikçi ve alıcıları bir araya getiren büyük B2B pazaryeri.
+Çoklu dil desteği ve geniş ürün kategorisi.
+İşletmeler RFQ (teklif talebi) yayınlayabilir.
+🌐 2) ECPlaza — Güney Kore & Global
+Kore merkezli geniş bir B2B platformu, üretici ve ithalatçı kataloğu sunar.
+Ürünler, elektronikten sanayiye kadar çeşitlidir.
+🌎 3) eWorldTrade — Uluslararası
+ABD merkezli global ticaret pazaryeri.
+Arayüz ve kullanım kolaylığıyla farklı ülkelerdeki işletmeleri bağlar.
+🇮🇳 4) IndiaMART — Hindistan’ın en büyük B2B pazaryeri
+Özellikle tekstil, el işçiliği, metal ürünler ve makinelerde güçlü.
+Hindistan’dan tedarikçi ve alıcı bulmak için idealdir.
+🇮🇳 5) TradeIndia — Hint ihracat odaklı pazar
+İhracatçı profilleri, ticari ürünler ve uluslararası alıcılarla eşleşme imkanı sunar.
+🇨🇳 6) Made-in-China.com — Çin kaynaklı üreticiler
+Alibaba’ya benzer ticaret sitesi; üreticileri ayrıntılı filtrelerle bulabilirsin.
+Sertifikalı ve denetimli tedarikçi seçenekleri var.
+🇨🇳 7) DHgate — Düşük MOQ’lu Çin pazarı
+Küçük işletmeler ve deneme siparişleri için cazip (bazı ürünlerde düşük minimum sipariş).
+Dünya genelinde alıcılar tarafından kullanılır.
+🌍 8) EC21 — Global B2B marketplace
+7M+ ürün ve çok sayıda tedarikçi ile karşılıklı ticaret fırsatı sunar.
+🌍 9) Kompass / Europages — Ticaret dizini
+Tamamen marketplace değil ama uluslararası işletme veritabanı ve ticaret eşleştirme için çok değerli.
+Avrupa ve dünya çapında firmalarla bağlantı kurmana yardımcı olur.
+🇺🇸 10) Thomasnet — Kuzey Amerika tedarikçi ağı
+ABD ve Kanada’daki endüstriyel üreticiler için güçlü bir direktör ve ticaret platformu.
+Özellikle sanayi, makine, bileşen tedariki için tercih edilir.
+Ek Modül 2:
+Otomatik talep paylaşımı? (en büyük parayı buradan kazanırsın) Burada harun dikici ile işbirliği yapılabilir. (anlatma fikrini çaldırma)  
+Abi senin yönlendirmen dahilinde olabilir tabi ki.
+Ek Modül 3: Dış ticaret eğitim
+Uzaktan eğitim programı ile personelin eğitimi zorunlu. 
+Eğitimi almış mı, eğitim arası anlık sorular, vs. gibi fraud (hile) önleyici fonksiyonu olan bedava bir sürü uygulama var. 
+Olur abi.
+
+Modül 4:  Websitelerin İletişim sayfasındaki mail adresinin yerine yetkilinin mail adresini bulma
+Biz müşterilerin web sitesini bulduğumuz zaman iletişim bölümünde hep info@firmaismi.com gibi info mail adresi yazıyorlar. Bu bizim işimizi zorlaştırıyor. Bizim kontak kurmamız gereken kişi purchasing@firmaismi.com veya manager@... Veya eğer sahıs ismi varsa genelde o firma yetkilisi oluyor, bu mail adreslerini bulmamız bizim işimizi hızlandırır.
+Bu mail adreslerinin websitesi bilgilerinin içerisine gömülü olduğunu düşünüyorum. 
+Bu firmalara yetkiliye daha hızlı ulaşmamızı sağlayacaktır.
+Modül 5:  Müşterilere otomatik mail atma
+Araştırmalar sonucu çıkan excel listelerindeki müşterilere tek tek mail atmak zaman alacak. Bunlara otomatik tanıtım maili ve katalog gönderme işlemini yaptırmak istiyoruz.
+* Mailler hep aynı olacağı için Spam’a düşmemesi gerekiyor.
+Modül 6: Müşterilerin web sitelerine sag altta olan otomatik mesajlaşan yapay zeka chat robotu yapılabilir.
+Firmaların web sitesine aynı bankalarda olan size nasıl yardımcı olabilirimle başlayıp soru soran ve bizim ona verdiğimiz bilgiler çervesinde konuşan bir chat robotu yapılabilir. Asıl hedefi müşteriden telefon ve mail bilgisi almak olacak.
+Her dilde konuşacak veya bizim tanımlattığımız dillerde konuşacak.
+Modül 7 : Hem Türkiye’de hem de Dünya genelindeki fuarlarda ki katılımcıları bizim işimizle uygun potansiyeli olup olmadığını kendi bilgisayarımdan incelemek istiyorum.
+
+Örnek: Ben Konya’da araçlara piston üreten ve ihraç eden bir firmayım. Benim katılmam gereken fuarlar Automechanica fuarları. Bu fuarlar başta Almanya, Dubai, Brezilya, Çin, Amerika olmak üzere diğer ülkelerde de yapılıyor. Bu fuarlara katılımcı listeleri yayınlanıyor. Ama her birine katılmak demek çok maliyetli olacak.  Ve benim katılımcı firmaların sayfalarına tek tek girip bakmak epey bi vaktimi alacak. Burada şöyle bişey yapılmasını istiyoruz;
+Fuar katılımcı isim listesini 
+                                       veya
+Fuarkatılımcı firmanın web sitesini
+Sol taraftaki katılımcı listelerini veya firmanın web site linklerini, sag tarafta benim doldurduğum bilgilere göre taramasını ve eşleşen firmaları bana excel olarak vermesini istiyorum.
+Çünkü fuara otomobille alakalı olan tüm firmalar katılacak ama bana sadece piston işi yapan firmalar lazım.
+Modül 8: Çinli firmaları bulmak istiyoruz.
+Şuan piyasada Çin hemen hemen her sektörde daha ucuz fiyat veriyor ve piyasada insanlar çinden ithal mal getirmeye çalışıyorlar ama firma araması ve bulması zor olacağını düşünüyor.
+Yukardaki sistemin Çin versiyonu yapılabilir ve onların tedarikçisiyle daha hızlı buluşturabiliriz.
+Modül 9: Şuan Amerika ithalat yapan büyük bir ülke bu yüzden amerika için yukardaki sistemi daha detaylı buldurursak Amerika bölgesinden potansiyel müşterilerle daha hızlı buluşturabiliriz.
+Çünkü Amerika büyük bir Pazar ama insanlar çok bilgi arasında kaybolup gidiyor.
+OEM NO: | 
+GTIP (H.S Code) NO: | 
+PARÇANIN TÜRKÇE İSMİ: | 
+PARÇANIN İNGİLİZCE İSMİ: | 
+PARÇANIN İSPANYOLCA İSMİ: | 
+PARÇANIN RUSÇA İSMİ: | 
+PARÇANIN ARAPÇA İSMİ: | 
+PARÇANIN FRANSIZCA İSMİ: | 
+PARÇANIN ALMANCA İSMİ: | 
+PARÇANIN RESMİ: | 
+PARÇANIN RESMİ: | 
+PARÇANIN RESMİ: | 
+Aranacak olan ülke uzantısı: | Örnek: .com ‘da ara.  / Örnek 2 : .ru ‘da ara (Rusya için) / Tüm ülkeler için bu uzantı yapılacak.
+OEM NO: | 
+GTIP (H.S Code) NO: | 
+PARÇANIN TÜRKÇE İSMİ: | 
+PARÇANIN İNGİLİZCE İSMİ: | 
+PARÇANIN İSPANYOLCA İSMİ: | 
+PARÇANIN RUSÇA İSMİ: | 
+PARÇANIN ARAPÇA İSMİ: | 
+PARÇANIN FRANSIZCA İSMİ: | 
+PARÇANIN ALMANCA İSMİ: | 
+PARÇANIN RESMİ: | 
+PARÇANIN RESMİ: | 
+PARÇANIN RESMİ: | 

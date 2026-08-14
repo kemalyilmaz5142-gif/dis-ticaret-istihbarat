@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: dis-ticaret-backend
+    env: docker
+    rootDir: apps/backend
+    plan: free
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: ENABLE_LIVE_WEB_SEARCH
+        value: "true"
+      - key: ENABLE_LIVE_IP_LOOKUP
+        value: "false"
+      - key: FRONTEND_ORIGIN
+        value: https://dis-ticaret-frontend.onrender.com
+
+  - type: web
+    name: dis-ticaret-frontend
+    env: docker
+    rootDir: apps/frontend
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        value: https://dis-ticaret-backend.onrender.com/api
