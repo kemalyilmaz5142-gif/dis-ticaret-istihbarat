@@ -85,6 +85,8 @@ type ProfileProduct = {
   name_en: string;
   hs_code: string;
   image_url?: string | null;
+  image_id?: string | null;
+  image_filename?: string | null;
 };
 
 type IntegrationStatus = {
@@ -290,15 +292,11 @@ function profileProductTerms(profile?: CustomerProfile | null): string[] {
     .filter(Boolean);
 }
 
-function parseProfileProducts(form: FormData): ProfileProduct[] {
-  return [0, 1, 2]
-    .map((index) => ({
-      name_tr: String(form.get(`profile_product_name_tr_${index}`) ?? "").trim(),
-      name_en: String(form.get(`profile_product_name_en_${index}`) ?? "").trim(),
-      hs_code: String(form.get(`profile_product_hs_code_${index}`) ?? "").trim(),
-      image_url: String(form.get(`profile_product_image_url_${index}`) ?? "").trim() || null
-    }))
-    .filter((product) => product.name_tr || product.name_en || product.hs_code || product.image_url);
+function cleanDemoValue(value?: string | null): string {
+  if (!value || value === "Demo Müşteri" || value === "Demo Musteri" || value === "Demo Export Company") {
+    return "";
+  }
+  return value;
 }
 
 export default function HomePage() {
@@ -456,7 +454,7 @@ export default function HomePage() {
     let productImageId = productImage?.image_id ?? null;
 
     if (file instanceof File && file.size > 0) {
-      productImageId = await uploadProductImage(file);
+      productImageId = (await uploadProductImage(file)).image_id;
     }
 
     const payload = {
@@ -567,7 +565,7 @@ export default function HomePage() {
     }
   }
 
-  async function uploadProductImage(file: File) {
+  async function uploadProductImage(file: File, rememberForSearch = true): Promise<ImageUploadResponse> {
     const form = new FormData();
     form.append("file", file);
     const response = await fetch(`${apiUrl}/images/product`, {
@@ -578,8 +576,10 @@ export default function HomePage() {
       throw new Error("Ürün resmi yüklenemedi.");
     }
     const data = (await response.json()) as ImageUploadResponse;
-    setProductImage(data);
-    return data.image_id;
+    if (rememberForSearch) {
+      setProductImage(data);
+    }
+    return data;
   }
 
   async function loadHistory() {
@@ -610,6 +610,7 @@ export default function HomePage() {
     setError(null);
 
     const form = new FormData(event.currentTarget);
+    const profileProducts = await buildProfileProducts(form);
     const payload: CustomerProfile = {
       customer_name: String(form.get("customer_name") ?? ""),
       company_name: String(form.get("company_name") ?? ""),
@@ -617,7 +618,7 @@ export default function HomePage() {
       catalog_url: String(form.get("catalog_url") ?? "") || null,
       default_sender_email: String(form.get("default_sender_email") ?? "") || null,
       target_sector: String(form.get("target_sector") ?? "") || null,
-      profile_products: parseProfileProducts(form),
+      profile_products: profileProducts,
       reference_websites: splitList(form.get("profile_reference_websites")),
       potential_customer_websites: splitList(form.get("profile_potential_customer_websites")),
       customer_product_terms: splitList(form.get("profile_customer_product_terms")),
@@ -636,6 +637,36 @@ export default function HomePage() {
     } else {
       setError("Müşteri profili kaydedilemedi.");
     }
+  }
+
+  async function buildProfileProducts(form: FormData): Promise<ProfileProduct[]> {
+    const products: ProfileProduct[] = [];
+    for (const index of [0, 1, 2]) {
+      const existing = profile?.profile_products?.[index];
+      const file = form.get(`profile_product_image_file_${index}`);
+      let imageId = existing?.image_id ?? null;
+      let imageFilename = existing?.image_filename ?? null;
+
+      if (file instanceof File && file.size > 0) {
+        const uploaded = await uploadProductImage(file, false);
+        imageId = uploaded.image_id;
+        imageFilename = uploaded.filename;
+      }
+
+      const product = {
+        name_tr: String(form.get(`profile_product_name_tr_${index}`) ?? "").trim(),
+        name_en: String(form.get(`profile_product_name_en_${index}`) ?? "").trim(),
+        hs_code: String(form.get(`profile_product_hs_code_${index}`) ?? "").trim(),
+        image_url: existing?.image_url ?? null,
+        image_id: imageId,
+        image_filename: imageFilename
+      };
+
+      if (product.name_tr || product.name_en || product.hs_code || product.image_id) {
+        products.push(product);
+      }
+    }
+    return products;
   }
 
   async function loadVisitors() {
@@ -706,7 +737,7 @@ export default function HomePage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         leads: lastSearch.results,
-        sender_company: profile?.company_name ?? "Demo Export Company",
+        sender_company: cleanDemoValue(profile?.company_name) || "Şirketiniz",
         catalog_url: profile?.catalog_url ?? null
       })
     });
@@ -1281,17 +1312,17 @@ export default function HomePage() {
         <section className={activeTab === "operations" ? "profilePanel tabPane active" : "profilePanel tabPane"}>
           <div className="panelHeader">
             <h2>Müşteri profili</h2>
-            <small className="panelMeta">{profile?.company_name ?? "Profil yükleniyor"}</small>
+            <small className="panelMeta">{cleanDemoValue(profile?.company_name) || "Profil bilgileri"}</small>
           </div>
           <form className="profileForm" onSubmit={saveProfile}>
             <div className="grid">
               <label>
                 Müşteri adı
-                <input name="customer_name" defaultValue={profile?.customer_name ?? "Demo Müşteri"} />
+                <input name="customer_name" defaultValue={cleanDemoValue(profile?.customer_name)} placeholder="Müşteri adı" />
               </label>
               <label>
                 Şirket adı
-                <input name="company_name" defaultValue={profile?.company_name ?? "Demo Export Company"} />
+                <input name="company_name" defaultValue={cleanDemoValue(profile?.company_name)} placeholder="Şirket adı" />
               </label>
               <label>
                 Web sitesi
@@ -1322,15 +1353,22 @@ export default function HomePage() {
                     <span>GTIP numarası</span>
                     <span>Ürünün resmi</span>
                   </div>
-                  {[0, 1, 2].map((index) => {
+                  {[
+                    { nameTr: "Fren balatası", nameEn: "Brake pads", hsCode: "870830" },
+                    { nameTr: "Debriyaj seti", nameEn: "Clutch kit", hsCode: "870893" },
+                    { nameTr: "Amortisör", nameEn: "Shock absorber", hsCode: "870880" }
+                  ].map((placeholder, index) => {
                     const product = profile?.profile_products?.[index];
                     return (
                       <div className="profileProductRow" key={`profile-product-${index}`}>
                         <strong>Ürün {index + 1}</strong>
-                        <input name={`profile_product_name_tr_${index}`} defaultValue={product?.name_tr ?? ""} placeholder="Fren balatası" />
-                        <input name={`profile_product_name_en_${index}`} defaultValue={product?.name_en ?? ""} placeholder="Brake pads" />
-                        <input name={`profile_product_hs_code_${index}`} defaultValue={product?.hs_code ?? ""} placeholder="870830" />
-                        <input name={`profile_product_image_url_${index}`} defaultValue={product?.image_url ?? ""} placeholder="https://..." />
+                        <input name={`profile_product_name_tr_${index}`} defaultValue={product?.name_tr ?? ""} placeholder={placeholder.nameTr} />
+                        <input name={`profile_product_name_en_${index}`} defaultValue={product?.name_en ?? ""} placeholder={placeholder.nameEn} />
+                        <input name={`profile_product_hs_code_${index}`} defaultValue={product?.hs_code ?? ""} placeholder={placeholder.hsCode} />
+                        <label className="fileCell">
+                          <input name={`profile_product_image_file_${index}`} accept="image/*" type="file" />
+                          {product?.image_filename && <small>Yüklü: {product.image_filename}</small>}
+                        </label>
                       </div>
                     );
                   })}

@@ -6,11 +6,13 @@ class ProfileProduct(BaseModel):
     name_en: str = ""
     hs_code: str = ""
     image_url: str | None = None
+    image_id: str | None = None
+    image_filename: str | None = None
 
 
 class CustomerProfile(BaseModel):
-    customer_name: str = "Demo Musteri"
-    company_name: str = "Demo Export Company"
+    customer_name: str = ""
+    company_name: str = ""
     website: str | None = None
     catalog_url: str | None = None
     default_sender_email: str | None = None

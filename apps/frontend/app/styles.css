@@ -943,6 +943,22 @@ textarea {
   min-height: 42px;
 }
 
+.fileCell {
+  gap: 5px;
+}
+
+.fileCell input {
+  cursor: pointer;
+  min-height: 42px;
+  padding: 9px;
+}
+
+.fileCell small {
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .chatForm {
   display: grid;
   gap: 12px;
