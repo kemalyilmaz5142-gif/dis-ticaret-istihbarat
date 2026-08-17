@@ -73,9 +73,18 @@ type CustomerProfile = {
   catalog_url?: string | null;
   default_sender_email?: string | null;
   target_sector?: string | null;
+  profile_products: ProfileProduct[];
+  reference_websites: string[];
   potential_customer_websites: string[];
   customer_product_terms: string[];
   excluded_product_terms: string[];
+};
+
+type ProfileProduct = {
+  name_tr: string;
+  name_en: string;
+  hs_code: string;
+  image_url?: string | null;
 };
 
 type IntegrationStatus = {
@@ -274,6 +283,24 @@ function joinList(items?: string[] | null): string {
   return (items ?? []).join("\n");
 }
 
+function profileProductTerms(profile?: CustomerProfile | null): string[] {
+  return (profile?.profile_products ?? [])
+    .flatMap((product) => [product.name_tr, product.name_en, product.hs_code ? `HS Code ${product.hs_code}` : ""])
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function parseProfileProducts(form: FormData): ProfileProduct[] {
+  return [0, 1, 2]
+    .map((index) => ({
+      name_tr: String(form.get(`profile_product_name_tr_${index}`) ?? "").trim(),
+      name_en: String(form.get(`profile_product_name_en_${index}`) ?? "").trim(),
+      hs_code: String(form.get(`profile_product_hs_code_${index}`) ?? "").trim(),
+      image_url: String(form.get(`profile_product_image_url_${index}`) ?? "").trim() || null
+    }))
+    .filter((product) => product.name_tr || product.name_en || product.hs_code || product.image_url);
+}
+
 export default function HomePage() {
   const [isMounted, setIsMounted] = useState(false);
   const [session, setSession] = useState<LoginResponse | null>(null);
@@ -454,10 +481,10 @@ export default function HomePage() {
         .filter(Boolean),
       potential_customer_websites: splitList(form.get("potential_customer_websites")).length > 0
         ? splitList(form.get("potential_customer_websites"))
-        : profile?.potential_customer_websites ?? [],
+        : [...(profile?.potential_customer_websites ?? []), ...(profile?.reference_websites ?? [])],
       customer_product_terms: splitList(form.get("customer_product_terms")).length > 0
         ? splitList(form.get("customer_product_terms"))
-        : profile?.customer_product_terms ?? [],
+        : [...(profile?.customer_product_terms ?? []), ...profileProductTerms(profile)],
       excluded_product_terms: splitList(form.get("excluded_product_terms")).length > 0
         ? splitList(form.get("excluded_product_terms"))
         : profile?.excluded_product_terms ?? [],
@@ -590,6 +617,8 @@ export default function HomePage() {
       catalog_url: String(form.get("catalog_url") ?? "") || null,
       default_sender_email: String(form.get("default_sender_email") ?? "") || null,
       target_sector: String(form.get("target_sector") ?? "") || null,
+      profile_products: parseProfileProducts(form),
+      reference_websites: splitList(form.get("profile_reference_websites")),
       potential_customer_websites: splitList(form.get("profile_potential_customer_websites")),
       customer_product_terms: splitList(form.get("profile_customer_product_terms")),
       excluded_product_terms: splitList(form.get("profile_excluded_product_terms"))
@@ -1279,6 +1308,37 @@ export default function HomePage() {
               <label>
                 Hedef sektör
                 <input name="target_sector" defaultValue={profile?.target_sector ?? ""} placeholder="automotive aftermarket" />
+              </label>
+              <div className="wide profileTableBlock">
+                <div className="profileTableHeader">
+                  <strong>Profil ürünleri</strong>
+                  <small>Ürün adı, İngilizce adı, GTIP ve ürün görseli arama kalitesini artırır.</small>
+                </div>
+                <div className="profileProductTable">
+                  <div className="profileProductHeader">
+                    <span>Ürün</span>
+                    <span>İsmi</span>
+                    <span>İngilizce ismi</span>
+                    <span>GTIP numarası</span>
+                    <span>Ürünün resmi</span>
+                  </div>
+                  {[0, 1, 2].map((index) => {
+                    const product = profile?.profile_products?.[index];
+                    return (
+                      <div className="profileProductRow" key={`profile-product-${index}`}>
+                        <strong>Ürün {index + 1}</strong>
+                        <input name={`profile_product_name_tr_${index}`} defaultValue={product?.name_tr ?? ""} placeholder="Fren balatası" />
+                        <input name={`profile_product_name_en_${index}`} defaultValue={product?.name_en ?? ""} placeholder="Brake pads" />
+                        <input name={`profile_product_hs_code_${index}`} defaultValue={product?.hs_code ?? ""} placeholder="870830" />
+                        <input name={`profile_product_image_url_${index}`} defaultValue={product?.image_url ?? ""} placeholder="https://..." />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <label className="wide">
+                Referans web siteleri
+                <textarea name="profile_reference_websites" defaultValue={joinList(profile?.reference_websites)} placeholder={"https://www.europages.co.uk\nhttps://www.kompass.com\nhttps://www.autodoc.co.uk"} />
               </label>
               <label className="wide">
                 Potansiyel müşteri web siteleri
